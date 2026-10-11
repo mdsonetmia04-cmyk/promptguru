@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { X, ExternalLink, Phone, Code2, Heart } from "lucide-react";
-import qrCode from "@/assets/mdsonetmia_qr.png";
+// Developer QR inlined as data URI (693 bytes) so the production build
+// has zero external asset dependency.
+const qrCode = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXIAAAFyAQAAAADAX2ykAAACfElEQVR4nO2bzW3cMBCFv4kE+MgFXEBKoTpwTSnJHUiluAAD1J3Cy4GkVmvYsI0oyioYHhar1Xd4wOBxfsg18Z01/fgWDs4777zzzjvv/Ee81dXDZD0w98BsBnN7Nxyox/md+ShJSkBUxoaQsSFIQCdJ0i3/t/U4vzM/rw5trtWvy2IAFGMfq8f5ffj+vR81/RQWX3osPh+rx/l9+XfjazGBmLsM87F6nN+Xb/ENAmYwQu4FS098XkwA2xHIvel3/kv8ZGZmFyC+PMiG+aGUVjawlPL5WD3O78SjdxaEDNCpFtbrGu9Nv/OfrBLQqIxGOhHT+iFJY8h4fM/LszVsqJEuj1Gt/x3LC4/v+fi3/i2GHcuLXJGxcR7fs/HNv0DxL3RqTpY0AsTk8T0p3+IWMlJa7Zxodm6e9v35lHwrnlInSZnybQRaJvb6+cz8mn/bJh0TsJ4qNBPj/j0nv84nlx5CgjJ6HhfT9JSwqMVEeO11jB7n9+Vv5huJ7a48hto41Y3b/XtCnpvQrvUz7bFUWt7/npXf9L/UgWSuSTimWj/X3zy+J+RL/t0cE03WCeYuM106rm8P0uP8vvym4WWdRV4TbmFiWsvpe9Pv/Ff4a1RtAMr9usnMWk5e/H7dOfmyP7fT3S5regIIwmJ6zMb8mKln/kfocX5ffjPfkNK2vroZfPj+fFJ+m39jG03W1BvW/Ov97//C2xAyTJfFNM5mpTGe7EE2/BM9zv8Z//b+pKahr1djocsWR63Z+Qg9zu/Lv70/SamqgjDCq8H8mAX1JuX96Xf+k7Vpc+tosqtTSaWuzp+vl7A8/56MN33ObJb/v9t555133nnnd+B/A0HVLsZPrlLPAAAAAElFTkSuQmCC";
 
 const DeveloperBubble = () => {
   const [open, setOpen] = useState(false);
