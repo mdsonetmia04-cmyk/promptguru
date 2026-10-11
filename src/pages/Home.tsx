@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
-import { Image, Lightbulb, BookOpen, FileText, FileSpreadsheet, Zap, ArrowRight, Sparkles, Wand2, Stars } from "lucide-react";
+import { Image, Lightbulb, BookOpen, Zap, ArrowRight, Sparkles, Wand2, Stars, FileCheck2, ShieldCheck } from "lucide-react";
 import ParticleField from "@/components/ParticleField";
 
 const features = [
+  { icon: FileCheck2, title: "Adobe Metadata Generator", desc: "Titles, 25-35 keywords & categories per Adobe's rules" },
+  { icon: ShieldCheck, title: "Compliance Checker", desc: "Instant Adobe-readiness score with fix tips" },
   { icon: Image, title: "Bulk Image Prompt Generator", desc: "Upload up to 100 images and generate prompts instantly" },
+  { icon: Zap, title: "5 Free AI Providers", desc: "Any one key powers the whole site — with auto-fallback" },
   { icon: Lightbulb, title: "Idea to Prompt Generator", desc: "Turn any concept into dozens of AI-ready prompts" },
   { icon: BookOpen, title: "Prompt Library", desc: "Browse curated prompts by category for inspiration" },
-  { icon: FileText, title: "TXT Export", desc: "Download all prompts as a clean text file" },
-  { icon: FileSpreadsheet, title: "CSV Export", desc: "Export prompts with titles and keywords to CSV" },
-  { icon: Zap, title: "AI API Integration", desc: "Powered by Gemini and Groq for fast generation" },
 ];
 
 const floatingIcons = [

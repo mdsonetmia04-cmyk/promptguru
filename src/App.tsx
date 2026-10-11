@@ -15,9 +15,10 @@ import PromptImprover from "./pages/PromptImprover";
 import PromptVariations from "./pages/PromptVariations";
 import PromptExpander from "./pages/PromptExpander";
 import PromptFixer from "./pages/PromptFixer";
-import PromptTranslator from "./pages/PromptTranslator";
 import PromptBrainstormer from "./pages/PromptBrainstormer";
 import SilhouettePromptFinder from "./pages/SilhouettePromptFinder";
+import AdobeMetadata from "./pages/AdobeMetadata";
+import ComplianceChecker from "./pages/ComplianceChecker";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,9 +42,10 @@ const App = () => (
               <Route path="/prompt-variations" element={<PromptVariations />} />
               <Route path="/prompt-expander" element={<PromptExpander />} />
               <Route path="/prompt-fixer" element={<PromptFixer />} />
-              <Route path="/prompt-translator" element={<PromptTranslator />} />
-              <Route path="/prompt-brainstormer" element={<PromptBrainstormer />} />
+                            <Route path="/prompt-brainstormer" element={<PromptBrainstormer />} />
               <Route path="/silhouette-finder" element={<SilhouettePromptFinder />} />
+              <Route path="/adobe-metadata" element={<AdobeMetadata />} />
+              <Route path="/compliance-checker" element={<ComplianceChecker />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

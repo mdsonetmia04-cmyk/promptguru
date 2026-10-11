@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Sun, Moon, Menu, X, Sparkles, ChevronDown, Wand2, Shuffle, Maximize2, Wrench, Languages, Lightbulb, CircleDot } from "lucide-react";
+import { Sun, Moon, Menu, X, Sparkles, ChevronDown, Wand2, Shuffle, Maximize2, Wrench, Lightbulb, CircleDot, FileCheck2, ShieldCheck } from "lucide-react";
 
 const mainNavItems = [
   { label: "Home", path: "/" },
@@ -14,9 +14,13 @@ const aiTools = [
   { label: "Prompt Variations", path: "/prompt-variations", icon: Shuffle },
   { label: "Prompt Expander", path: "/prompt-expander", icon: Maximize2 },
   { label: "Prompt Fixer", path: "/prompt-fixer", icon: Wrench },
-  { label: "Prompt Translator", path: "/prompt-translator", icon: Languages },
   { label: "Prompt Brainstormer", path: "/prompt-brainstormer", icon: Lightbulb },
   { label: "Silhouette Finder", path: "/silhouette-finder", icon: CircleDot },
+];
+
+const adobeTools = [
+  { label: "Adobe Metadata Generator", path: "/adobe-metadata", icon: FileCheck2 },
+  { label: "Compliance Checker", path: "/compliance-checker", icon: ShieldCheck },
 ];
 
 const Navbar = () => {
@@ -29,7 +33,9 @@ const Navbar = () => {
   });
   const [mobileOpen, setMobileOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
+  const [adobeOpen, setAdobeOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const adobeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
@@ -41,12 +47,16 @@ const Navbar = () => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setToolsOpen(false);
       }
+      if (adobeRef.current && !adobeRef.current.contains(e.target as Node)) {
+        setAdobeOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const isToolActive = aiTools.some((t) => location.pathname === t.path);
+  const isAdobeActive = adobeTools.some((t) => location.pathname === t.path);
 
   return (
     <nav className="sticky top-0 z-50 glass-card border-b rounded-none px-4 lg:px-8 py-3">
@@ -89,6 +99,37 @@ const Navbar = () => {
                     key={tool.path}
                     to={tool.path}
                     onClick={() => setToolsOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
+                      location.pathname === tool.path
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <tool.icon className="w-4 h-4" />
+                    {tool.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Adobe Stock Dropdown */}
+          <div className="relative" ref={adobeRef}>
+            <button
+              onClick={() => setAdobeOpen(!adobeOpen)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
+                isAdobeActive ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              }`}
+            >
+              Adobe Stock <ChevronDown className={`w-4 h-4 transition-transform ${adobeOpen ? "rotate-180" : ""}`} />
+            </button>
+            {adobeOpen && (
+              <div className="absolute top-full left-0 mt-2 w-60 glass-card rounded-lg border shadow-lg py-2 animate-fade-in-up">
+                {adobeTools.map((tool) => (
+                  <Link
+                    key={tool.path}
+                    to={tool.path}
+                    onClick={() => setAdobeOpen(false)}
                     className={`flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
                       location.pathname === tool.path
                         ? "bg-primary/10 text-primary"
@@ -152,6 +193,22 @@ const Navbar = () => {
           ))}
           <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">AI Tools</div>
           {aiTools.map((tool) => (
+            <Link
+              key={tool.path}
+              to={tool.path}
+              onClick={() => setMobileOpen(false)}
+              className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center gap-3 ${
+                location.pathname === tool.path
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              }`}
+            >
+              <tool.icon className="w-4 h-4" />
+              {tool.label}
+            </Link>
+          ))}
+          <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Adobe Stock</div>
+          {adobeTools.map((tool) => (
             <Link
               key={tool.path}
               to={tool.path}

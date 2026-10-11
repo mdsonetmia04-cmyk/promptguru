@@ -421,6 +421,53 @@ export const generateSilhouettePrompts = async (topic: string, style: string, qu
   return parseIdeaResponse(text);
 };
 
+export interface AdobeMetadataResult {
+  title: string;
+  keywords: string[];
+  categoryId: number;
+}
+
+const ADOBE_CATEGORY_LIST = `1 Animals, 2 Buildings and Architecture, 3 Business, 4 Drinks, 5 Environment, 6 States of Mind, 7 Food, 8 Healthcare, 9 Hobbies and Leisure, 10 Industry, 11 Landscape, 12 Lifestyle, 13 People, 14 Plants and Flowers, 15 Culture and Religion, 16 Science, 17 Social Issues, 18 Sports, 19 Technology, 20 Transport, 21 Travel`;
+
+const ADOBE_METADATA_RULES = `You are an expert Adobe Stock contributor metadata writer. Follow Adobe's official rules strictly:
+- Title: ONE natural descriptive sentence, max 70 characters, NO commas, no ALL CAPS, no brand or trademark names, no people's names, no camera specs. Describe only what is visible.
+- Keywords: 25 to 35 keywords, ordered by importance (most important first). Single words or short natural phrases. Nouns in singular form. No duplicates. No brand names, no people's names, no camera specs, no standalone numbers.
+- Category: reply with ONLY the category number (1-21) from this list: ${ADOBE_CATEGORY_LIST}.
+Return EXACTLY in this format and nothing else:
+Title: <title>
+Keywords: <kw1>, <kw2>, ...
+Category: <number>`;
+
+export const generateAdobeMetadataFromText = async (
+  description: string
+): Promise<AdobeMetadataResult> => {
+  const prompt = `${ADOBE_METADATA_RULES}\n\nDescribe this asset for Adobe Stock:\n"${description}"`;
+  const text = await generateText(prompt);
+  return parseAdobeMetadata(text);
+};
+
+export const generateAdobeMetadataFromImage = async (
+  imageBase64: string
+): Promise<AdobeMetadataResult> => {
+  const prompt = `${ADOBE_METADATA_RULES}\n\nLook at the image and describe it for Adobe Stock.`;
+  const text = await generateVisionText(prompt, imageBase64);
+  return parseAdobeMetadata(text);
+};
+
+const parseAdobeMetadata = (text: string): AdobeMetadataResult => {
+  const titleMatch = text.match(/Title:\s*(.+)/i);
+  const keywordsMatch = text.match(/Keywords:\s*([\s\S]*?)(?=\nCategory:|$)/i);
+  const categoryMatch = text.match(/Category:\s*(\d{1,2})/i);
+  const title = (titleMatch?.[1] || "").trim().replace(/,$/, "");
+  const keywords = (keywordsMatch?.[1] || "")
+    .split(",")
+    .map((k) => k.trim().replace(/^\d+[\.\)]\s*/, ""))
+    .filter((k) => k.length > 1)
+    .slice(0, 49);
+  const categoryId = Math.min(21, Math.max(1, parseInt(categoryMatch?.[1] || "0", 10) || 0));
+  return { title, keywords, categoryId };
+};
+
 // ------------------------- Response parsing ----------------------------------
 
 const parsePromptResponse = (text: string): { prompt: string; title: string; keywords: string } => {
