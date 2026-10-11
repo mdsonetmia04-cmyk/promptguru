@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Wrench, Copy, Download, Loader2 } from "lucide-react";
-import { fixPrompt, downloadTxt, getApiKey } from "@/lib/api";
+import { fixPrompt, downloadTxt, getApiKey, hasAnyApiKey } from "@/lib/api";
 import { toast } from "sonner";
 
 const PromptFixer = () => {
@@ -10,7 +10,7 @@ const PromptFixer = () => {
 
   const handleFix = async () => {
     if (!input.trim()) return toast.error("Please enter a prompt to fix.");
-    if (!getApiKey("groq")) return toast.error("Please add Groq API key in Settings.");
+    if (!hasAnyApiKey()) return toast.error("Please add an API key in Settings.");
     
     setLoading(true);
     try {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Lightbulb, Copy, Download, Loader2 } from "lucide-react";
-import { brainstormPrompts, downloadTxt, getApiKey } from "@/lib/api";
+import { brainstormPrompts, downloadTxt, getApiKey, hasAnyApiKey } from "@/lib/api";
 import { toast } from "sonner";
 
 const quantities = [10, 20, 50];
@@ -13,7 +13,7 @@ const PromptBrainstormer = () => {
 
   const handleGenerate = async () => {
     if (!input.trim()) return toast.error("Please enter a topic.");
-    if (!getApiKey("groq")) return toast.error("Please add Groq API key in Settings.");
+    if (!hasAnyApiKey()) return toast.error("Please add an API key in Settings.");
     
     setLoading(true);
     try {

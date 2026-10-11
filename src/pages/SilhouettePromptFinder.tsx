@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CircleDot, Copy, Download, Star, Loader2 } from "lucide-react";
-import { generateSilhouettePrompts, downloadTxt, getApiKey } from "@/lib/api";
+import { generateSilhouettePrompts, downloadTxt, getApiKey, hasAnyApiKey } from "@/lib/api";
 import { toast } from "sonner";
 
 const styles = ["Vector Silhouette", "Minimal Silhouette", "Dynamic Silhouette", "Logo Style Silhouette", "Illustration Silhouette"];
@@ -15,7 +15,7 @@ const SilhouettePromptFinder = () => {
 
   const handleGenerate = async () => {
     if (!input.trim()) return toast.error("Please enter a topic/object.");
-    if (!getApiKey("groq")) return toast.error("Please add Groq API key in Settings.");
+    if (!hasAnyApiKey()) return toast.error("Please add an API key in Settings.");
     
     setLoading(true);
     try {
