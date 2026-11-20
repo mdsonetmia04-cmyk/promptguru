@@ -158,29 +158,55 @@ async function callOpenAIChat(
   throw lastError;
 }
 
+// Gemini used to call one model only: when gemini-3.5-flash is overloaded
+// (HTTP 503 "high demand") every tool failed because there was no other
+// provider configured. Try the Flash family in order until one answers —
+// same key, same request. Model names match the ones Sweet Lab already
+// uses from Google's own models list.
+const GEMINI_MODELS = [
+  "gemini-3.5-flash",
+  "gemini-3.5-flash-lite",
+  "gemini-3.6-flash",
+  "gemini-3.7-flash",
+  "gemini-3.8-flash",
+  "gemini-flash-latest",
+  "gemini-flash-lite-latest",
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-2.0-flash",
+];
+
 async function callGemini(key: string, prompt: string, imageBase64?: string): Promise<string> {
   const parts: any[] = [{ text: prompt }];
   if (imageBase64) {
     parts.push({ inlineData: { mimeType: "image/jpeg", data: imageBase64 } });
   }
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${encodeURIComponent(key)}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts }] }),
+  let lastError: unknown = new Error("No Gemini models configured");
+  for (const model of GEMINI_MODELS) {
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contents: [{ parts }] }),
+        }
+      );
+      const data = await readJsonSafe(res);
+      if (!res.ok || data?.error) {
+        throw new Error(data?.error?.message || `Gemini request failed (${res.status})`);
+      }
+      const text =
+        data?.candidates?.[0]?.content?.parts
+          ?.map((p: any) => p?.text || "")
+          .join("") || "";
+      if (!text.trim()) throw new Error("Gemini returned an empty response");
+      return text;
+    } catch (e) {
+      lastError = e;
     }
-  );
-  const data = await readJsonSafe(res);
-  if (!res.ok || data?.error) {
-    throw new Error(data?.error?.message || `Gemini request failed (${res.status})`);
   }
-  const text =
-    data?.candidates?.[0]?.content?.parts
-      ?.map((p: any) => p?.text || "")
-      .join("") || "";
-  if (!text.trim()) throw new Error("Gemini returned an empty response");
-  return text;
+  throw lastError;
 }
 
 async function callHuggingFace(key: string, prompt: string): Promise<string> {
