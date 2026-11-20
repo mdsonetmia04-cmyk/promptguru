@@ -78,6 +78,31 @@ describe("unified text engine", () => {
     expect(fetchMock.mock.calls[2][0]).toContain("api.cerebras.ai");
   });
 
+  it("falls through to the next Gemini model when the first is overloaded", async () => {
+    setApiKey("gemini", "g-test");
+    const okGemini = (content: string) => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ candidates: [{ content: { parts: [{ text: content }] } }] }),
+    });
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+        json: async () => ({ error: { message: "This model is currently experiencing high demand." } }),
+      })
+      .mockResolvedValueOnce(
+        okGemini("1. alpha beta gamma delta epsilon\n2. zeta eta theta iota kappa")
+      );
+    vi.stubGlobal("fetch", fetchMock);
+    const out = await generatePromptsFromIdea("cat", "photo", "fun", 2);
+    expect(out).toHaveLength(2);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock.mock.calls[0][0]).toContain("gemini-3.5-flash:");
+    expect(fetchMock.mock.calls[1][0]).toContain("gemini-3.5-flash-lite:");
+  });
+
   it("tries the preferred provider first", async () => {
     setApiKey("groq", "gq-test");
     setApiKey("cerebras", "ck-test");
